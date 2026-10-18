@@ -37,6 +37,9 @@ def update_discord_widget():
     try:
         # Fetch MMR
         mmr_resp = requests.get(f"{base_url}/v2/mmr/{CONFIG['VAL_REGION']}/{CONFIG['VAL_NAME']}/{CONFIG['VAL_TAG']}", headers=headers, timeout=10)
+        if mmr_resp.status_code != 200:
+            logger.error(f"Henrik MMR error {mmr_resp.status_code}: {mmr_resp.text}")
+            return
         mmr_payload = mmr_resp.json().get("data", {})
         current_data = mmr_payload.get("current_data", {})
         
@@ -49,6 +52,9 @@ def update_discord_widget():
         
         # Fetch Level
         acc_resp = requests.get(f"{base_url}/v1/account/{CONFIG['VAL_NAME']}/{CONFIG['VAL_TAG']}", headers=headers, timeout=10)
+        if acc_resp.status_code != 200:
+            logger.error(f"Henrik account error {acc_resp.status_code}: {acc_resp.text}")
+            return
         level = str(acc_resp.json().get("data", {}).get("account_level", "0"))
         
     except Exception as e:
